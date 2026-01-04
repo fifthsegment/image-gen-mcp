@@ -39,15 +39,17 @@ export IMAGE_OUTPUT_DIR="/optional/custom/path"  # defaults to ./generated-image
 
 ## Models
 
+Costs are approximate per-image prices from Replicate. Check https://replicate.com/pricing for current rates.
+
 | Model | Cost | Reference Images | Notes |
 |-------|------|------------------|-------|
-| imagen-3 | $0.04 | No | Default, high quality |
-| imagen-3-fast | $0.02 | No | Faster |
-| nano-banana-pro | $0.05 | Yes | Best text rendering |
-| flux-schnell | $0.003 | No | Cheapest |
-| flux-dev | $0.025 | No | Better quality |
-| flux-pro | $0.04 | No | Professional |
-| flux-redux | $0.025 | Yes | Style transfer |
+| imagen-3 | ~$0.04 | No | Default, high quality |
+| imagen-3-fast | ~$0.02 | No | Faster |
+| nano-banana-pro | ~$0.05 | Yes | Best text rendering |
+| flux-schnell | ~$0.003 | No | Cheapest |
+| flux-dev | ~$0.025 | No | Better quality |
+| flux-pro | ~$0.04 | No | Professional |
+| flux-redux | ~$0.025 | Yes | Style transfer |
 
 ## Tools
 
