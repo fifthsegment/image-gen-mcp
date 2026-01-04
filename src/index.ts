@@ -509,28 +509,16 @@ const tools: Tool[] = [
 ];
 
 // ============================================================================
-// MCP Server Setup
+// Tool Handler
 // ============================================================================
 
-const server = new Server(
-  {
-    name: "image-gen-mcp",
-    version: "1.0.0",
-  },
-  {
-    capabilities: {
-      tools: {},
-    },
-  }
-);
-
-server.setRequestHandler(ListToolsRequestSchema, async () => {
-  return { tools };
-});
-
-server.setRequestHandler(CallToolRequestSchema, async (request) => {
-  const { name, arguments: args } = request.params;
-
+export async function handleToolCall(
+  name: string,
+  args: Record<string, unknown>
+): Promise<{
+  content: Array<{ type: string; text: string }>;
+  isError?: boolean;
+}> {
   try {
     switch (name) {
       case "generate_image": {
@@ -789,10 +777,41 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       isError: true,
     };
   }
-});
+}
 
-// Start the server
+// ============================================================================
+// MCP Server Setup
+// ============================================================================
+
+export function createServer(): Server {
+  const server = new Server(
+    {
+      name: "image-gen-mcp",
+      version: "1.0.0",
+    },
+    {
+      capabilities: {
+        tools: {},
+      },
+    }
+  );
+
+  server.setRequestHandler(ListToolsRequestSchema, async () => {
+    return { tools };
+  });
+
+  server.setRequestHandler(CallToolRequestSchema, async (request) => {
+    const { name, arguments: args } = request.params;
+    return handleToolCall(name, args as Record<string, unknown>);
+  });
+
+  return server;
+}
+
+export { tools, MODELS, DEFAULT_MODEL, OUTPUT_DIR };
+
 async function main() {
+  const server = createServer();
   const transport = new StdioServerTransport();
   await server.connect(transport);
   console.error("Image Generation MCP Server running on stdio");
@@ -801,7 +820,10 @@ async function main() {
   console.error(`Available models: ${modelKeys.join(", ")}`);
 }
 
-main().catch((error) => {
-  console.error("Fatal error:", error);
-  process.exit(1);
-});
+const isMainModule = import.meta.url === `file://${process.argv[1]}`;
+if (isMainModule) {
+  main().catch((error) => {
+    console.error("Fatal error:", error);
+    process.exit(1);
+  });
+}
